@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		1D3841321AE464CF00E29ADE /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 1D3841311AE464CF00E29ADE /* main.c */; };
+		1D38413B1AE4669A00E29ADE /* parseArguments.c in Sources */ = {isa = PBXBuildFile; fileRef = 1D3841391AE4669A00E29ADE /* parseArguments.c */; };
+		1D38413E1AE4678500E29ADE /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 1D38413C1AE4678500E29ADE /* utils.c */; };
+		1D3841421AE467D400E29ADE /* stack.c in Sources */ = {isa = PBXBuildFile; fileRef = 1D3841401AE467D400E29ADE /* stack.c */; };
+		1D3841461AE4696C00E29ADE /* hexString.c in Sources */ = {isa = PBXBuildFile; fileRef = 1D3841441AE4696C00E29ADE /* hexString.c */; };
+		1D38414B1AE478B700E29ADE /* arithmeticLogic.c in Sources */ = {isa = PBXBuildFile; fileRef = 1D3841491AE478B700E29ADE /* arithmeticLogic.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +30,18 @@
 /* Begin PBXFileReference section */
 		1D38412E1AE464CF00E29ADE /* y86vm */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = y86vm; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D3841311AE464CF00E29ADE /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		1D3841381AE465F100E29ADE /* environment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = environment.h; sourceTree = "<group>"; };
+		1D3841391AE4669A00E29ADE /* parseArguments.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = parseArguments.c; sourceTree = "<group>"; };
+		1D38413A1AE4669A00E29ADE /* parseArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parseArguments.h; sourceTree = "<group>"; };
+		1D38413C1AE4678500E29ADE /* utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utils.c; sourceTree = "<group>"; };
+		1D38413D1AE4678500E29ADE /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+		1D3841401AE467D400E29ADE /* stack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stack.c; sourceTree = "<group>"; };
+		1D3841411AE467D400E29ADE /* stack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stack.h; sourceTree = "<group>"; };
+		1D3841441AE4696C00E29ADE /* hexString.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hexString.c; sourceTree = "<group>"; };
+		1D3841451AE4696C00E29ADE /* hexString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hexString.h; sourceTree = "<group>"; };
+		1D3841481AE470FB00E29ADE /* example.yo */ = {isa = PBXFileReference; lastKnownFileType = text; path = example.yo; sourceTree = "<group>"; };
+		1D3841491AE478B700E29ADE /* arithmeticLogic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = arithmeticLogic.c; sourceTree = "<group>"; };
+		1D38414A1AE478B700E29ADE /* arithmeticLogic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = arithmeticLogic.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +58,7 @@
 		1D3841251AE464CE00E29ADE = {
 			isa = PBXGroup;
 			children = (
+				1D3841481AE470FB00E29ADE /* example.yo */,
 				1D3841301AE464CF00E29ADE /* y86vm */,
 				1D38412F1AE464CF00E29ADE /* Products */,
 			);
@@ -57,9 +75,36 @@
 		1D3841301AE464CF00E29ADE /* y86vm */ = {
 			isa = PBXGroup;
 			children = (
+				1D3841431AE4694600E29ADE /* foreign */,
+				1D38413F1AE467BC00E29ADE /* instructions */,
 				1D3841311AE464CF00E29ADE /* main.c */,
+				1D3841381AE465F100E29ADE /* environment.h */,
+				1D3841391AE4669A00E29ADE /* parseArguments.c */,
+				1D38413A1AE4669A00E29ADE /* parseArguments.h */,
+				1D38413C1AE4678500E29ADE /* utils.c */,
+				1D38413D1AE4678500E29ADE /* utils.h */,
 			);
 			path = y86vm;
+			sourceTree = "<group>";
+		};
+		1D38413F1AE467BC00E29ADE /* instructions */ = {
+			isa = PBXGroup;
+			children = (
+				1D3841401AE467D400E29ADE /* stack.c */,
+				1D3841411AE467D400E29ADE /* stack.h */,
+				1D3841491AE478B700E29ADE /* arithmeticLogic.c */,
+				1D38414A1AE478B700E29ADE /* arithmeticLogic.h */,
+			);
+			name = instructions;
+			sourceTree = "<group>";
+		};
+		1D3841431AE4694600E29ADE /* foreign */ = {
+			isa = PBXGroup;
+			children = (
+				1D3841441AE4696C00E29ADE /* hexString.c */,
+				1D3841451AE4696C00E29ADE /* hexString.h */,
+			);
+			name = foreign;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -89,7 +134,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0630;
-				ORGANIZATIONNAME = "Code From Above";
+				ORGANIZATIONNAME = "Code From Above, LLC";
 				TargetAttributes = {
 					1D38412D1AE464CE00E29ADE = {
 						CreatedOnToolsVersion = 6.3;
@@ -118,6 +163,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1D38413E1AE4678500E29ADE /* utils.c in Sources */,
+				1D3841461AE4696C00E29ADE /* hexString.c in Sources */,
+				1D38414B1AE478B700E29ADE /* arithmeticLogic.c in Sources */,
+				1D38413B1AE4669A00E29ADE /* parseArguments.c in Sources */,
+				1D3841421AE467D400E29ADE /* stack.c in Sources */,
 				1D3841321AE464CF00E29ADE /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

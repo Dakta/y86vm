@@ -27,7 +27,6 @@
 typedef struct Config {
   bool verbose;
   unsigned long int maxSteps;
-  // struct Node* ord_prev;
 } Config;
 
 typedef struct StackNode {
@@ -41,7 +40,10 @@ typedef struct Stack {
 } Stack;
 
 typedef struct VirtualMachineState {
+  // TODO: replace this with storage in program memory
   char * code;
+  // how many steps has program taken
+  unsigned long int steps;
   // program counter
   unsigned long int PC;
   // ALU flags

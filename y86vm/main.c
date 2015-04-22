@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <sysexits.h>
 
 #include "utils.h"
 #include "environment.h"
@@ -39,8 +40,8 @@ int main(int argc, char const *argv[]) {
            config->maxSteps);
   }
 
+  // initialize our VM state
   state = malloc(sizeof(VirtualMachineState));
-
   // program counter
   state->PC = 0;
   // ALU flags
@@ -49,16 +50,10 @@ int main(int argc, char const *argv[]) {
   state->OF = false;
   // program status
   state->STAT = STAT_AOK;
-  /**
-   * 1 AOK - Normal operation
-   * 2 HLT - Halt instruction encountered
-   * 3 ADR - Bad address (either instruction or data) encountered
-   * 4 INS - Invalid instruction encountered
-   **/
   // program memory
   state->DMEM = malloc(MEM_SZ);
   
-  // we have a stack
+  // TODO: replace this with in-memory stack
   state->stack = newStack();
   
 //  // load program into an easy-to-index variable
@@ -73,32 +68,31 @@ int main(int argc, char const *argv[]) {
 //  fclose(f);
 //  
 //  program[fsize] = 0; // set null terminator
-//  
+//
+  
   /*
-   * Demonstrates a call to 'slurp'.
+   * Load program into char buffer.
    */
   long  file_size;
   
+  // TODO: error checking on this argument
   file_size = slurp(argv[argc - 1], &state->code, false);
   if( file_size < 0L ) {
     perror("File read failed");
-    return 1;
+    exit(EX_NOINPUT);
   }
   /* Remember to free() memory allocated by slurp() */
   
-  // how many operations we've completed
-  long int steps = 0;
-    
   // begin the main execution loop
   do {
-    steps++;
+    state->steps++;
     
     long int valA;
     long int valB;
     long int valC;
     long int valE;
     long int valP;
-    char value[8];
+    char value[8]; // used for parsing hardcoded values
     
     // 1. Fetch:
     //     - Instruction bytes are read from memory based on Program Counter (P.C.)
@@ -109,7 +103,7 @@ int main(int argc, char const *argv[]) {
     
     // Fetch will be performed here, and a switch case will pass execution to a specialized function.
     
-    /*
+    /* example.yo:
      30f0cdab0000
      a00f
      30f20e000000
@@ -137,7 +131,7 @@ int main(int argc, char const *argv[]) {
       case '2':
         // rrmovl
         // TODO validation
-        state->registers[rA] = state->registers[rB];
+        state->registers[rB] = state->registers[rA];
         state->PC += 4;
         break;
       case '3':
@@ -222,7 +216,7 @@ int main(int argc, char const *argv[]) {
     
     // until we run out of program or exceed the specified max steps
   } while (state->PC < file_size
-           && !(!config->maxSteps != !(steps < config->maxSteps))
+           && !(!config->maxSteps != !(state->steps < config->maxSteps))
            && state->STAT == STAT_AOK);
   
   while (state->stack->top) {

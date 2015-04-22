@@ -51,21 +51,6 @@ Config * parseArguments(int argc, char const *argv[]) {
       
       printUsage();
       
-      printf("It supports the following arithmetic operators:\n");
-      printf("  +  Addition\n");
-      printf("  -  Subtraction\n");
-      printf("  *  Multiplication\n");
-      printf("  /  Division\n\n");
-      
-      printf("TinyCalc stores the most recent five calculations,\n");
-      printf("which can be accessed by using the memory operators:\n");
-      printf("  &  Addition\n");
-      printf("  ~  Subtraction\n");
-      printf("  ^  Multiplication\n");
-      printf("  %%  Division\n");
-      printf("Then pass a zero-indexed memory designator as the\n");
-      printf("first operand.\n");
-      
       exit(EX_OK);
     } else if (strcmp(argv[i], "-V") == 0 ||
                strcmp(argv[i], "--version") == 0

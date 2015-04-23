@@ -78,12 +78,12 @@ int main(int argc, char const *argv[]) {
   do {
     state->steps++;
     
-    long int valA;
-    long int valB;
-    long int valC;
-    long int valE;
-    long int valP;
-    char value[8]; // used for parsing hardcoded values
+    int valA;
+    int valB;
+    int valC;
+    int valE;
+    int valP;
+    int valM;
     bool Cnd; // condition code conditions
     
     // 1. Fetch:

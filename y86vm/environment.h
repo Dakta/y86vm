@@ -54,13 +54,13 @@ typedef struct VirtualMachineState {
   // how many steps has program taken
   unsigned long int steps;
   // program counter
-  unsigned long int PC;
+  unsigned int PC;
   // ALU flags
   bool ZF;
   bool SF;
   bool OF;
   // program status
-  int STAT;
+  uint8_t STAT;
   /**
    * 1 AOK - Normal operation
    * 2 HLT - Halt instruction encountered
@@ -70,7 +70,7 @@ typedef struct VirtualMachineState {
   // program memory
   uint8_t * DMEM; // 2 to the 19 bits in bytes
   // program registers
-  long int registers[8];
+  int registers[8];
   
 //  unsigned int eax = 0;
 //  unsigned int ebx = 0;

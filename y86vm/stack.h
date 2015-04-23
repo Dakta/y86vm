@@ -20,8 +20,8 @@ void pushl(int val);
 void popl(int * reg);
 
 // TODO: hide these
-StackNode * push(Stack * stack, long int val);
-long int pop (Stack * stack);
+StackNode * push(Stack * stack, int val);
+int pop (Stack * stack);
 
 
 #endif /* defined(__y86vm__stack__) */

@@ -39,7 +39,7 @@ Stack * newStack() {
   return stack;
 }
 
-StackNode * push(Stack * stack, long int val) {
+StackNode * push(Stack * stack, int val) {
   StackNode * node = malloc(sizeof(StackNode));
   if (!node) return NULL;
   node->val = val;
@@ -49,7 +49,7 @@ StackNode * push(Stack * stack, long int val) {
   return node;
 }
 
-long int pop(Stack * stack) {
+int pop(Stack * stack) {
   int val = stack->top->val;
   StackNode * prev = stack->top->prev;
   free(stack->top);

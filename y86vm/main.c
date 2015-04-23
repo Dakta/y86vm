@@ -125,10 +125,12 @@ int main(int argc, char const *argv[]) {
     switch(icode) {
       case 0x0:
         // halt
+        printf("halt\n");
         state->STAT = STAT_HLT;
         break;
       case 0x1:
         // nop
+        printf("nop\n");
         state->PC += 1;
         break;
       case 0x2:
@@ -136,10 +138,12 @@ int main(int argc, char const *argv[]) {
         // TODO validation
         state->registers[rB] = state->registers[rA];
         state->PC += 2;
+        printf("rrmovl  %s, %s\n", registerString(rA), registerString(rB));
         break;
       case 0x3:
         // irmovl
         // TODO: validation
+        printf("irmovl  $%d, %s\n", littleEndianBytesToInt(&state->DMEM[state->PC + 2]), registerString(rB));
         valC = littleEndianBytesToInt(&state->DMEM[state->PC + 2]);
         state->registers[rA] = valA;
         state->PC += 6;
@@ -148,6 +152,7 @@ int main(int argc, char const *argv[]) {
         // rmmovl
         valA = state->registers[rA];
         valB = state->registers[rB];
+        printf("rmmovl  %s, ($%d)%s\n", registerString(rA), littleEndianBytesToInt(&state->DMEM[state->PC + 2]), registerString(rB));
         valC = littleEndianBytesToInt(&state->DMEM[state->PC + 2]);
         valP = state->PC + 6;
         
@@ -157,6 +162,7 @@ int main(int argc, char const *argv[]) {
         break;
       case 0x5:
         // mrmovl
+        printf("mrmovl  ($%d)%s, %s\n", littleEndianBytesToInt(&state->DMEM[state->PC + 2]), registerString(rA), registerString(rB));
         valC = littleEndianBytesToInt(&state->DMEM[state->PC + 2]);
         valP = state->PC + 6;
         
@@ -174,6 +180,7 @@ int main(int argc, char const *argv[]) {
       case 0x7:
         // jump
         valC = littleEndianBytesToInt(&state->DMEM[state->PC + 2]);
+        printf("jmp%d    $%d\n", ifun, littleEndianBytesToInt(&state->DMEM[state->PC + 1]));
         valP = state->PC + 5;
         
         Cnd = Cond(ifun);
@@ -184,13 +191,16 @@ int main(int argc, char const *argv[]) {
         strncpy(value, &state->source[state->PC + 1], 4);
         valA = bigEndianCharArrayToInt(littleToBigEndianChars(value));
         state->PC = valA;
+        printf("call    $%d\n", littleEndianBytesToInt(&state->DMEM[state->PC + 1]));
         break;
       case 0x9:
         // ret
         state->PC += 1;
+        printf("ret\n");
         break;
       case 0xA:
         // pushl
+        printf("pushl   %s, %s\n", registerString(rA), registerString(rB));
         valA = state->registers[rA];
         push(state->stack, valA);
         state->PC += 2;
@@ -200,6 +210,7 @@ int main(int argc, char const *argv[]) {
         valA = pop(state->stack);
         state->registers[rA] = valA;
         state->PC += 2;
+        printf("popl    %s, %s\n", registerString(rA), registerString(rB));
         break;
       default:
         // invalid instruction
@@ -212,9 +223,22 @@ int main(int argc, char const *argv[]) {
            && !(!config->maxSteps != !(state->steps < config->maxSteps))
            && state->STAT == STAT_AOK);
 
-  printf("Exiting with status %d", state->STAT);
-  
-//  while (state->stack->top) {
+  printf("Steps: %lu\n", state->steps);
+  printf("PC: %#010x\n", state->PC);
+  printf("Status: %s\n", statusString(state->STAT));
+  printf("CZ: %d\n", (int)state->ZF);
+  printf("CS: %d\n", (int)state->SF);
+  printf("CO: %d\n", (int)state->OF);
+  printf("%%eax: %#010x\n", state->registers[0]);
+  printf("%%ecx: %#010x\n", state->registers[1]);
+  printf("%%edx: %#010x\n", state->registers[2]);
+  printf("%%ebx: %#010x\n", state->registers[3]);
+  printf("%%esp: %#010x\n", state->registers[4]);
+  printf("%%ebp: %#010x\n", state->registers[5]);
+  printf("%%esi: %#010x\n", state->registers[6]);
+  printf("%%edi: %#010x\n", state->registers[7]);
+
+  //  while (state->stack->top) {
 //    printf("%lu\n", pop(state->stack));
 //  }
   

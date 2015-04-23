@@ -14,6 +14,10 @@
 
 int strpos(char * string, char find);
 
+char * statusString(uint8_t stat);
+
+char * registerString(uint8_t stat);
+
 long slurp(char const* path, char **buf, bool add_nul);
 
 char * littleToBigEndianChars(char * littleEndian);

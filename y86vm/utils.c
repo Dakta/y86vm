@@ -12,7 +12,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <sysexits.h>
 
+#include "environment.h"
 #include "hexString.h"
 
 /**
@@ -27,6 +29,67 @@ int strpos(char * string, char find) {
   } else {
     return -1;
   }
+}
+
+char * statusString(uint8_t stat) {
+  // status codes
+  char * status = malloc(sizeof(char)*4);
+  switch (stat) {
+    case STAT_AOK:
+      status = "AOK";
+      break;
+    case STAT_HLT:
+      status = "HLT";
+      break;
+    case STAT_ADR:
+      status = "ADR";
+      break;
+    case STAT_INS:
+      status = "INS";
+      break;
+    default:
+      printf("Unknown status code %d", stat);
+      exit(EXIT_FAILURE);
+  }
+  return status;
+}
+
+char * registerString(uint8_t stat) {
+  // status codes
+  char * reg = malloc(sizeof(char)*5);
+  switch (stat) {
+    case REG_EAX:
+      reg = "%eax";
+      break;
+    case REG_ECX:
+      reg = "%ecx";
+      break;
+    case REG_EDX:
+      reg = "%edx";
+      break;
+    case REG_EBX:
+      reg = "%ebx";
+      break;
+    case REG_ESP:
+      reg = "%esp";
+      break;
+    case REG_EBP:
+      reg = "%ebp";
+      break;
+    case REG_ESI:
+      reg = "%esi";
+      break;
+    case REG_EDI:
+      reg = "%edi";
+      break;
+    case REG_NONE:
+      reg = "NONE";
+      break;
+    default:
+      printf("Unknown register code %d", stat);
+      exit(EXIT_FAILURE);
+  }
+  return reg;
 }
 
 

@@ -7,9 +7,8 @@
 //
 
 /**
- * y86vm
  * A bare-bones emulator/virtual machine for the Y86 assembly language.
- * © 2015 Dakota Schneider, all rights reserved. Unlicensed, do not distriute.
+ * © 2015 Dakota Schneider/Code From Above, LLC, all rights reserved. Unlicensed, do not distriute.
  **/
 
 #include <stdio.h>
@@ -93,25 +92,36 @@ int main(int argc, char const *argv[]) {
     //     - May load a 32-bit constant valC
     //     - Next program instruction address is computed, called `valP`
     
+    // 2. Decode:
+    //     - Read register values into valA and valB
+    //     - Read %esp
+    
+    // 3. Execute:
+    //     - ALU performs operation defined by instruction -> ValE
+    //     - Effective memory address calculation -> ValE
+    //     - Stack pointer increment/decrement -> ValE
+    //     - Condition codes are set
+    
+    // 4. Memory:
+    //     - May write data to memory
+    //     - May read value from memory into ValM
+
     // Fetch will be performed here, and a switch case will pass execution to a specialized function.
     
-    /* example.yo:
-     30f0cdab0000
-     a00f
-     30f20e000000
-     6120
-     b02f
-     00
-     */
+    // Get the instruction code and instruction function
     // these are nibbles, but we have to use byte-sized variables
     uint8_t icode = (state->DMEM[state->PC]>>4) & 0xF;
     uint8_t ifun  = state->DMEM[state->PC] & 0xF;
     
+    // These fetch operations are performed frequently,
+    // so just do them every time.
     uint8_t rA = (state->DMEM[state->PC + 1]>>4) & 0xF;
     uint8_t rB = state->DMEM[state->PC + 1] & 0xF;
 
-    printf("icode = %#03x\n ifun = %#03x\n", icode, ifun);
+    // TODO verbosity
+    // printf("icode = %#03x\n ifun = %#03x\n", icode, ifun);
     
+    // perform operation specified by instruction code
     switch(icode) {
       case 0x0:
         // halt
@@ -197,23 +207,7 @@ int main(int argc, char const *argv[]) {
         break;
     }
     
-    // All of the following steps will be performed within functions
-    
-    // 2. Decode:
-    //     - Read register values into valA and valB
-    //     - Read %esp
-    
-    // 3. Execute:
-    //     - ALU performs operation defined by instruction -> ValE
-    //     - Effective memory address calculation -> ValE
-    //     - Stack pointer increment/decrement -> ValE
-    //     - Condition codes are set
-    
-    // 4. Memory:
-    //     - May write data to memory
-    //     - May read value from memory into ValM
-    
-    // until we run out of program or exceed the specified max steps
+    // until we run out of program, exceed the specified max steps, or abort
   } while (state->PC < file_size
            && !(!config->maxSteps != !(state->steps < config->maxSteps))
            && state->STAT == STAT_AOK);

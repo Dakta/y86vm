@@ -18,6 +18,8 @@ long slurp(char const* path, char **buf, bool add_nul);
 
 char * littleToBigEndianChars(char * littleEndian);
 
+int littleEndianBytesToInt(uint8_t * littleEndian);
+
 long int bigEndianCharArrayToInt(char * bigEndian);
 
 

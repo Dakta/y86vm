@@ -21,6 +21,7 @@
 #include "utils.h"
 #include "environment.h"
 #include "parseArguments.h"
+#include "hexString.h"
 
 
 // instruction handlers
@@ -73,15 +74,19 @@ int main(int argc, char const *argv[]) {
   /*
    * Load program into char buffer.
    */
-  long  file_size;
+  long file_size;
   
   // TODO: error checking on this argument
-  file_size = slurp(argv[argc - 1], &state->code, false);
+  file_size = slurp(argv[argc - 1], &state->source, false);
   if( file_size < 0L ) {
     perror("File read failed");
     exit(EX_NOINPUT);
   }
   /* Remember to free() memory allocated by slurp() */
+  
+  // load program source into memory, convert chars to bytes
+  uint8_t * programBytes = hexStringToBytes(state->source);
+  memcpy(state->DMEM, programBytes, strlen(state->source) / 2 + 1);
   
   // begin the main execution loop
   do {
@@ -111,86 +116,93 @@ int main(int argc, char const *argv[]) {
      b02f
      00
      */
-    char icode = state->code[state->PC];
-    char ifun  = state->code[state->PC + 1];
+    // these are nibbles, but we have to use byte-sized variables
+    uint8_t icode = (state->DMEM[state->PC]>>4) & 0xF;
+    uint8_t ifun  = state->DMEM[state->PC] & 0xF;
     
-    int rA = state->code[state->PC + 2] - 48;
-    int rB = state->code[state->PC + 3] - 48;
+    uint8_t rA = (state->DMEM[state->PC + 1]>>4) & 0xF;
+    uint8_t rB = state->DMEM[state->PC + 1] & 0xF;
 
-    printf("icode = %c\n ifun = %c\n", icode, ifun);
+    printf("icode = %#010x\n ifun = %#010x\n", icode, ifun);
     
     switch(icode) {
-      case '0':
+      case 0x0:
         // halt
         state->STAT = STAT_HLT;
         break;
-      case '1':
+      case 0x1:
         // nop
-        state->PC += 2;
+        state->PC += 1;
         break;
-      case '2':
+      case 0x2:
         // rrmovl
         // TODO validation
         state->registers[rB] = state->registers[rA];
-        state->PC += 4;
+        state->PC += 2;
         break;
-      case '3':
+      case 0x3:
         // irmovl
-        // de-little-endian bytes
         // TODO: validation
-        strncpy(value, &state->code[state->PC + 4], 8);
-        valA = bigEndianCharArrayToInt(littleToBigEndianChars(value));
+        valC = littleEndianBytesToInt(&state->DMEM[state->PC + 2]);
         state->registers[rA] = valA;
-        state->PC += 12;
+        state->PC += 6;
         break;
-      case '4':
+      case 0x4:
         // rmmovl
-        strncpy(value, &state->code[state->PC + 4], 8);
         valA = state->registers[rA];
         valB = state->registers[rB];
-        valC = bigEndianCharArrayToInt(littleToBigEndianChars(value));
-        valP = state->PC + 12;
+        valC = littleEndianBytesToInt(&state->DMEM[state->PC + 2]);
+        valP = state->PC + 6;
         
         valE = valB + valC;
         state->DMEM[valE] = valA;
         state->PC = valP;
         break;
-      case '5':
+      case 0x5:
         // mrmovl
-        state->PC += 12;
+        valC = littleEndianBytesToInt(&state->DMEM[state->PC + 2]);
+        valP = state->PC + 6;
+        
+        valB = state->registers[rB];
+        valE = valB + valC;
+        state->registers[rA] = state->DMEM[valE];
+
+        state->PC = valP;
         break;
-      case '6':
+      case 0x6:
         // ALU OPl
         OPl(ifun, rA, rB);
-        state->PC += 4;
+        state->PC += 2;
         break;
-      case '7':
+      case 0x7:
         // jump
-        state->PC += 10;
+        valC = littleEndianBytesToInt(&state->DMEM[state->PC + 2]);
+        valP = state->PC + 5;
+        
+        Cnd = Cond(ifun);
+        state->PC = Cnd ? valC : valP;
         break;
-      case '8':
+      case 0x8:
         // call
-        strncpy(value, &state->code[state->PC + 2], 8);
+        strncpy(value, &state->source[state->PC + 1], 4);
         valA = bigEndianCharArrayToInt(littleToBigEndianChars(value));
         state->PC = valA;
         break;
-      case '9':
+      case 0x9:
         // ret
-        state->PC += 2;
+        state->PC += 1;
         break;
-      case 'a':
+      case 0xA:
         // pushl
-        rA = state->code[state->PC + 2] - 48; // convert char to int
         valA = state->registers[rA];
         push(state->stack, valA);
-        state->PC += 4;
+        state->PC += 2;
         break;
-      case 'b':
+      case 0xB:
         // popl
-        rA = state->code[state->PC + 2] - 48; // convert char to int
         valA = pop(state->stack);
         state->registers[rA] = valA;
-        state->PC += 4;
+        state->PC += 2;
         break;
       default:
         // invalid instruction
@@ -218,6 +230,7 @@ int main(int argc, char const *argv[]) {
   } while (state->PC < file_size
            && !(!config->maxSteps != !(state->steps < config->maxSteps))
            && state->STAT == STAT_AOK);
+
   
   while (state->stack->top) {
     printf("%lu\n", pop(state->stack));

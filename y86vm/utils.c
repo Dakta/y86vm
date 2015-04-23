@@ -41,6 +41,18 @@ char * littleToBigEndianChars(char * littleEndian) {
   return bigEndian;
 }
 
+int littleEndianBytesToInt(uint8_t * littleEndian) {
+  int retval;
+  uint8_t * bigEndian = (uint8_t *)&retval;
+
+  // X86 ints are little-endian, so we can just copy the bytes
+  for (int i = 0; i < 4; i++) {
+    bigEndian[i] = littleEndian[i];
+  }
+  
+  return retval;
+}
+
 long int bigEndianCharArrayToInt(char * bigEndian) {
   char * endptr;
   long int number = strtol(bigEndian, &endptr, 16);

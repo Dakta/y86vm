@@ -41,7 +41,7 @@ typedef struct Stack {
 
 typedef struct VirtualMachineState {
   // TODO: replace this with storage in program memory
-  char * code;
+  char * source;
   // how many steps has program taken
   unsigned long int steps;
   // program counter
@@ -59,7 +59,7 @@ typedef struct VirtualMachineState {
    * 4 INS - Invalid instruction encountered
    **/
   // program memory
-  char * DMEM; // 2 to the 19 bits in bytes
+  uint8_t * DMEM; // 2 to the 19 bits in bytes
   // program registers
   long int registers[8];
   

@@ -57,20 +57,6 @@ int main(int argc, char const *argv[]) {
   // TODO: replace this with in-memory stack
   state->stack = newStack();
   
-//  // load program into an easy-to-index variable
-//  // http://stackoverflow.com/a/14002993/362042
-//  FILE *f = fopen(argv[argc - 1], "rb"); // TODO: value checking on the source file path
-//  fseek(f, 0, SEEK_END);
-//  long fsize = ftell(f);
-//  fseek(f, 0, SEEK_SET);
-//  
-//  char *program = malloc(fsize + 1);
-//  fread(program, fsize, 1, f);
-//  fclose(f);
-//  
-//  program[fsize] = 0; // set null terminator
-//
-  
   /*
    * Load program into char buffer.
    */
@@ -78,7 +64,7 @@ int main(int argc, char const *argv[]) {
   
   // TODO: error checking on this argument
   file_size = slurp(argv[argc - 1], &state->source, false);
-  if( file_size < 0L ) {
+  if ( file_size < 0L ) {
     perror("File read failed");
     exit(EX_NOINPUT);
   }
@@ -98,6 +84,7 @@ int main(int argc, char const *argv[]) {
     long int valE;
     long int valP;
     char value[8]; // used for parsing hardcoded values
+    bool Cnd; // condition code conditions
     
     // 1. Fetch:
     //     - Instruction bytes are read from memory based on Program Counter (P.C.)
@@ -123,7 +110,7 @@ int main(int argc, char const *argv[]) {
     uint8_t rA = (state->DMEM[state->PC + 1]>>4) & 0xF;
     uint8_t rB = state->DMEM[state->PC + 1] & 0xF;
 
-    printf("icode = %#010x\n ifun = %#010x\n", icode, ifun);
+    printf("icode = %#03x\n ifun = %#03x\n", icode, ifun);
     
     switch(icode) {
       case 0x0:
@@ -231,10 +218,11 @@ int main(int argc, char const *argv[]) {
            && !(!config->maxSteps != !(state->steps < config->maxSteps))
            && state->STAT == STAT_AOK);
 
+  printf("Exiting with status %d", state->STAT);
   
-  while (state->stack->top) {
-    printf("%lu\n", pop(state->stack));
-  }
+//  while (state->stack->top) {
+//    printf("%lu\n", pop(state->stack));
+//  }
   
   return 0;
 }

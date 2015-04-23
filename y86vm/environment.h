@@ -21,6 +21,15 @@
 #define STAT_ADR 3
 #define STAT_INS 4
 
+// condition codes
+#define COND_NONE 0
+#define COND_LTE  1
+#define COND_LT   2
+#define COND_EQ   3
+#define COND_NE   4
+#define COND_GTE  5
+#define COND_GT   6
+
 // 
 #define MEM_SZ 65536 // 2 to the 19 bits in bytes
 

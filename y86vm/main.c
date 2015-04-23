@@ -135,82 +135,190 @@ int main(int argc, char const *argv[]) {
         break;
       case 0x2:
         // rrmovl
-        // TODO validation
-        state->registers[rB] = state->registers[rA];
-        state->PC += 2;
         printf("rrmovl  %s, %s\n", registerString(rA), registerString(rB));
+        // fetch
+        valP = state->PC + 2;
+        // decode
+        valA = state->registers[rA];
+        // execute
+        valE = valA;
+        // writeback
+        state->registers[rB] = valE;
+        // PC update
+        state->PC = valP;
         break;
       case 0x3:
         // irmovl
-        // TODO: validation
         printf("irmovl  $%d, %s\n", littleEndianBytesToInt(&state->DMEM[state->PC + 2]), registerString(rB));
+        // fetch
         valC = littleEndianBytesToInt(&state->DMEM[state->PC + 2]);
-        state->registers[rA] = valA;
-        state->PC += 6;
+        valP = state->PC + 6;
+        // execute
+        valE = valC;
+        // writeback
+        state->registers[rB] = valE;
+        // PC update
+        state->PC = valP;
         break;
       case 0x4:
         // rmmovl
-        valA = state->registers[rA];
-        valB = state->registers[rB];
         printf("rmmovl  %s, ($%d)%s\n", registerString(rA), littleEndianBytesToInt(&state->DMEM[state->PC + 2]), registerString(rB));
+        // fetch
         valC = littleEndianBytesToInt(&state->DMEM[state->PC + 2]);
         valP = state->PC + 6;
-        
+        // decode
+        valA = state->registers[rA];
+        valB = state->registers[rB];
+        // execute
         valE = valB + valC;
+        // memory
         state->DMEM[valE] = valA;
+        // PC update
         state->PC = valP;
         break;
       case 0x5:
         // mrmovl
         printf("mrmovl  ($%d)%s, %s\n", littleEndianBytesToInt(&state->DMEM[state->PC + 2]), registerString(rA), registerString(rB));
+        // fetch
         valC = littleEndianBytesToInt(&state->DMEM[state->PC + 2]);
         valP = state->PC + 6;
-        
+        // decode
         valB = state->registers[rB];
+        // execute
         valE = valB + valC;
-        state->registers[rA] = state->DMEM[valE];
-
+        // memory
+        valM = state->DMEM[valE];
+        // writeback
+        state->registers[rA] = valM;
+        // PC update
         state->PC = valP;
         break;
       case 0x6:
         // ALU OPl
-        OPl(ifun, rA, rB);
-        state->PC += 2;
+        // fetch
+        valP = state->PC + 2;
+        // decode
+        valA = state->registers[rA];
+        valB = state->registers[rB];
+        // execute
+        switch (ifun) {
+          case 0x0:
+            // addl
+            printf("addl    %s, %s\n", registerString(rA), registerString(rB));
+            valE = state->registers[rB] + state->registers[rA];
+            break;
+          case 0x1:
+            // subl
+            printf("subl    %s, %s\n", registerString(rA), registerString(rB));
+            valE = state->registers[rB] - state->registers[rA];
+            break;
+          case 0x2:
+            // andl
+            printf("andl    %s, %s\n", registerString(rA), registerString(rB));
+            valE = state->registers[rB] & state->registers[rA];
+            break;
+          case 0x3:
+            // xorl
+            printf("xorl    %s, %s\n", registerString(rA), registerString(rB));
+            valE = state->registers[rB] ^ state->registers[rA];
+            break;
+            
+          default:
+            state->STAT = STAT_INS;
+            break;
+        }
+        // set CC
+        // overflow (true when sign of result not equal to sign of equal operands)
+        state->OF = ( (valA > 0) && (valB > 0) ) != (valE > 0);
+        // sign (true for negatives)
+        state->SF = (valE < 0);
+        // zero (true for zero)
+        state->ZF = (valE == 0);
+        
+        // writeback
+        state->registers[rB] = valE;
+        // PC update
+        state->PC = valP;
         break;
       case 0x7:
         // jump
-        valC = littleEndianBytesToInt(&state->DMEM[state->PC + 2]);
+        // fetch
         printf("jmp%d    $%d\n", ifun, littleEndianBytesToInt(&state->DMEM[state->PC + 1]));
+        valC = littleEndianBytesToInt(&state->DMEM[state->PC + 1]);
         valP = state->PC + 5;
-        
-        Cnd = Cond(ifun);
+        // execute
+        Cnd = evaluateConditionCodes(ifun);
+        // PC update
         state->PC = Cnd ? valC : valP;
         break;
       case 0x8:
         // call
-        strncpy(value, &state->source[state->PC + 1], 4);
-        valA = bigEndianCharArrayToInt(littleToBigEndianChars(value));
-        state->PC = valA;
         printf("call    $%d\n", littleEndianBytesToInt(&state->DMEM[state->PC + 1]));
+        // fetch
+        valC = littleEndianBytesToInt(&state->DMEM[state->PC + 1]);
+        valP = state->PC + 5;
+        // decode
+        valB = state->registers[REG_ESP];
+        // execute
+        valE = valB - 4;
+        // memory
+        state->DMEM[valE] = valP;
+        // writeback
+        state->registers[REG_ESP] = valE;
+        // PC update
+        state->PC = valC;
         break;
       case 0x9:
         // ret
-        state->PC += 1;
         printf("ret\n");
+        // fetch
+        valP = state->PC + 1;
+        // decode
+        valA = state->registers[REG_ESP];
+        valB = state->registers[REG_ESP];
+        // execute
+        valE = valB + 4;
+        // memory
+        valM = state->DMEM[valA];
+        // writeback
+        state->registers[REG_ESP] = valE;
+        // PC update
+        state->PC = valM;
         break;
       case 0xA:
         // pushl
         printf("pushl   %s, %s\n", registerString(rA), registerString(rB));
+        // fetch
+        valP = state->PC + 2;
+        // decode
         valA = state->registers[rA];
-        push(state->stack, valA);
+        valB = state->registers[REG_ESP];
+        // execute
+        valE = valB - 4;
+        // memory
+        state->DMEM[valE] = valA;
+        // writeback
+        state->registers[REG_ESP] = valE;
+        // PC update
         state->PC += 2;
         break;
       case 0xB:
         // popl
-        valA = pop(state->stack);
-        state->registers[rA] = valA;
-        state->PC += 2;
         printf("popl    %s, %s\n", registerString(rA), registerString(rB));
+        // fetch
+        valP = state->PC + 2;
+        // decode
+        valA = state->registers[REG_ESP];
+        valB = state->registers[REG_ESP];
+        // execute
+        valE = valB + 4;
+        // memory
+        valM = state->DMEM[valA];
+        // writeback
+        state->registers[REG_ESP] = valE;
+        state->registers[rA] = valM;
+        // PC update
+        state->PC = valP;
         break;
       default:
         // invalid instruction

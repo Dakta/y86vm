@@ -25,7 +25,7 @@ uint8_t
 {
   uint8_t *retval;
   uint8_t *p;
-  int len, i;
+  unsigned long int len, i;
   
   len = strlen(inhex) / 2;
   retval = malloc(len+1);

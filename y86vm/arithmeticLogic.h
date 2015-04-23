@@ -13,7 +13,7 @@
 
 void OPl(char ifun, int rA, int rB);
 
-bool Cond(uint8_t ifun);
+bool evaluateConditionCodes(uint8_t ifun);
 
 
 #endif /* defined(__y86vm__arithmeticLogic__) */

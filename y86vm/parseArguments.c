@@ -24,7 +24,7 @@
 static void printUsage();
 
 static void printUsage() {
-  printf("Usage: ./y86vm [-h|--help] [-V|--version] [-v|--verbose] [-l|--limit [n]]\n");
+  printf("Usage: ./y86vm [-h|--help] [-V|--version] [-v|--verbose] [-l|--limit [n]] inputfile\n");
   printf("  -h/--help\n    Show this screen and exit.\n");
   printf("  -V/--version\n    Print version information and exit.\n");
   printf("  -v/--verbose\n    Print every step.\n\n");

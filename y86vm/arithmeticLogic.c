@@ -20,17 +20,17 @@ bool evaluateConditionCodes(uint8_t ifun) {
     case COND_NONE:
       return true;
     case COND_LTE:
-      return (bool)((state->SF ^ state->OF) | state->ZF);
+      return (bool)((state->SF != state->OF) || state->ZF);
     case COND_LT:
-      return (bool)(state->SF ^ state->OF);
+      return (bool)(state->SF != state->OF);
     case COND_EQ:
       return (bool)(state->ZF);
     case COND_NE:
-      return (bool)(~state->ZF);
+      return (bool)(!state->ZF);
     case COND_GTE:
-      return (bool)(~(state->SF ^ state->OF));
+      return (bool)(!(state->SF != state->OF));
     case COND_GT:
-      return (bool)(~(state->SF ^ state->OF) & ~state->ZF);
+      return (bool)(!(state->SF != state->OF) && !state->ZF);
     
     default:
       return false;

@@ -66,6 +66,10 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "sample47.yo"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "sample47.yo.OLD"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

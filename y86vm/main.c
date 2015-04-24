@@ -43,7 +43,7 @@ int main(int argc, char const *argv[]) {
   // initialize our VM state
   state = malloc(sizeof(VirtualMachineState));
   // program counter
-  state->PC = 0;
+  state->PC = 2;
   // ALU flags
   state->ZF = false;
   state->SF = false;
@@ -71,7 +71,7 @@ int main(int argc, char const *argv[]) {
   
   // load program source into memory, convert chars to bytes
   uint8_t * programBytes = hexStringToBytes(state->source);
-  memcpy(state->DMEM, programBytes, strlen(state->source) / 2 + 1);
+  memcpy(state->DMEM + 2, programBytes, strlen(state->source) / 2 + 1);
   
   // begin the main execution loop
   do {

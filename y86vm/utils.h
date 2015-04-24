@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
-
+#include <stdint.h>
 
 #define LOG_OFF    0
 #define LOG_FATAL  1
@@ -33,9 +33,14 @@ void logprintf(int level, const char *format, ...);
 
 long slurp(char const* path, char **buf, bool add_nul);
 
+long slurpBytes(char const* path, uint8_t **buf, bool add_nul);
+
+
 char * littleToBigEndianChars(char * littleEndian);
 
 int littleEndianBytesToInt(uint8_t * littleEndian);
+
+uint8_t * intToLittleEndianBytes(int value);
 
 long int bigEndianCharArrayToInt(char * bigEndian);
 

@@ -16,16 +16,20 @@
 #include <stdbool.h>
 #include <string.h>
 #include <sysexits.h>
+#include <stdint.h>
 
 #include "utils.h"
 #include "environment.h"
 #include "parseArguments.h"
 #include "hexString.h"
-
+// unused
+#include "memoryManager.h"
 
 // instruction handlers
-#include "stack.h"
 #include "arithmeticLogic.h"
+
+// unused
+#include "stack.h"
 
 
 // yes, I know, global variables are icky
@@ -43,9 +47,9 @@ int main(int argc, char const *argv[]) {
 
   // initialize our VM state
   state = malloc(sizeof(VirtualMachineState));
+  state->steps = 0;
   // program counter
-  // pad with 2 bytes to account for address offset
-  state->PC = 2;
+  state->PC = 0;
   // ALU flags
   state->ZF = false;
   state->SF = false;
@@ -64,17 +68,35 @@ int main(int argc, char const *argv[]) {
   long file_size;
   
   // TODO: error checking on this argument
-  file_size = slurp(argv[argc - 1], &state->source, false);
-  if ( file_size < 0L ) {
-    perror("File read failed");
-    exit(EX_NOINPUT);
+
+  switch (config->inputFormat) {
+    case INPUT_ASCII:
+      file_size = slurp(argv[argc - 1], &state->sourceASCII, false);
+      if ( file_size < 0L ) {
+        perror("File read failed");
+        exit(EX_NOINPUT);
+      }
+      /* Remember to free() memory allocated by slurp() */
+      
+      // load program source into memory, convert chars to bytes
+      uint8_t * programBytes = hexStringToBytes(state->sourceASCII);
+      memcpy(state->DMEM, programBytes, strlen(state->sourceASCII) / 2 + 1);
+      break;
+    case INPUT_BYTES:
+      file_size = slurpBytes(argv[argc - 1], &state->sourceBytes, false);
+      if ( file_size < 0L ) {
+        perror("File read failed");
+        exit(EX_NOINPUT);
+      }
+      /* Remember to free() memory allocated by slurp() */
+      
+      // load program source into memory
+      memcpy(state->DMEM, state->sourceBytes, file_size);
+      break;
+    default:
+      // should never happen
+      exit(EX_USAGE);
   }
-  /* Remember to free() memory allocated by slurp() */
-  
-  // load program source into memory, convert chars to bytes
-  uint8_t * programBytes = hexStringToBytes(state->source);
-  // pad program by two bytes
-  memcpy(state->DMEM + 2, programBytes, strlen(state->source) / 2 + 1);
   
   // begin the main execution loop
   do {
@@ -121,8 +143,9 @@ int main(int argc, char const *argv[]) {
     uint8_t rA = (state->DMEM[state->PC + 1]>>4) & 0xF;
     uint8_t rB = state->DMEM[state->PC + 1] & 0xF;
 
-    // TODO verbosity
-    // printf("icode = %#03x\n ifun = %#03x\n", icode, ifun);
+    // we probably don't need this, but who knows it might come in handy
+    logprintf(LOG_TRACE, " icode = %#03x\n ifun  = %#03x\n", icode, ifun);
+    logprintf(LOG_TRACE, " rA = %#03x, rB = %#03x\n", rA, rB);
     
     // perform operation specified by instruction code
     switch(icode) {
@@ -191,7 +214,7 @@ int main(int argc, char const *argv[]) {
         // execute
         valE = valB + valC;
         // memory
-        valM = state->DMEM[valE];
+        valM = littleEndianBytesToInt(&state->DMEM[valE]);
         // writeback
         state->registers[rA] = valM;
         // PC update
@@ -208,7 +231,7 @@ int main(int argc, char const *argv[]) {
         switch (ifun) {
           case 0x0:
             // addl
-            logprintf(LOG_DEBUG, "addl    %s, %s\n", registerString(rA), registerString(rB));
+            logprintf(LOG_DEBUG, "addl    %s, %s  (%d + %d)\n", registerString(rA), registerString(rB), valA, valB);
             valE = state->registers[rB] + state->registers[rA];
             break;
           case 0x1:
@@ -239,7 +262,9 @@ int main(int argc, char const *argv[]) {
         state->SF = (valE < 0);
         // zero (true for zero)
         state->ZF = (valE == 0);
-        
+
+        logprintf(LOG_TRACE, "  SF = %d, OF = %d, ZF = %d\n", state->SF, state->OF, state->ZF);
+
         // writeback
         state->registers[rB] = valE;
         // PC update
@@ -284,7 +309,7 @@ int main(int argc, char const *argv[]) {
         // execute
         valE = valB + 4;
         // memory
-        valM = state->DMEM[valA];
+        valM = littleEndianBytesToInt(&state->DMEM[valA]);
         // writeback
         state->registers[REG_ESP] = valE;
         // PC update
@@ -318,7 +343,7 @@ int main(int argc, char const *argv[]) {
         // execute
         valE = valB + 4;
         // memory
-        valM = state->DMEM[valA];
+        valM = littleEndianBytesToInt(&state->DMEM[valA]);
         // writeback
         state->registers[REG_ESP] = valE;
         state->registers[rA] = valM;
@@ -352,9 +377,5 @@ int main(int argc, char const *argv[]) {
   printf("%%esi: %#010x\n", state->registers[6]);
   printf("%%edi: %#010x\n", state->registers[7]);
 
-  //  while (state->stack->top) {
-//    printf("%lu\n", pop(state->stack));
-//  }
-  
   return 0;
 }

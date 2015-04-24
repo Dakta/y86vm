@@ -7,6 +7,8 @@
  *
  */
 
+#include <stdint.h>
+
 #include "hexString.h"
 
 /* utility function to convert hex character representation to their nibble (4 bit) values */

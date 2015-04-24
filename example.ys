@@ -1,0 +1,6 @@
+  irmovl $0xABCD,%eax 
+  pushl %eax
+  irmovl $14, %edx
+  subl %edx,%eax
+  popl %edx
+  halt

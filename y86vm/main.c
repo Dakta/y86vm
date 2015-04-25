@@ -43,6 +43,7 @@ int main(int argc, char const *argv[]) {
   // initialize our VM state
   state = malloc(sizeof(VirtualMachineState));
   // program counter
+  // pad with 2 bytes to account for address offset
   state->PC = 2;
   // ALU flags
   state->ZF = false;
@@ -71,6 +72,7 @@ int main(int argc, char const *argv[]) {
   
   // load program source into memory, convert chars to bytes
   uint8_t * programBytes = hexStringToBytes(state->source);
+  // pad program by two bytes
   memcpy(state->DMEM + 2, programBytes, strlen(state->source) / 2 + 1);
   
   // begin the main execution loop
@@ -222,6 +224,7 @@ int main(int argc, char const *argv[]) {
             printf("xorl    %s, %s\n", registerString(rA), registerString(rB));
             valE = state->registers[rB] ^ state->registers[rA];
             break;
+          // there is room in the encoding here for an additional 12 ALU operations
             
           default:
             state->STAT = STAT_INS;
@@ -287,7 +290,7 @@ int main(int argc, char const *argv[]) {
         break;
       case 0xA:
         // pushl
-        printf("pushl   %s, %s\n", registerString(rA), registerString(rB));
+        printf("pushl   %s\n", registerString(rA));
         // fetch
         valP = state->PC + 2;
         // decode
@@ -304,7 +307,7 @@ int main(int argc, char const *argv[]) {
         break;
       case 0xB:
         // popl
-        printf("popl    %s, %s\n", registerString(rA), registerString(rB));
+        printf("popl    %s\n", registerString(rA));
         // fetch
         valP = state->PC + 2;
         // decode
@@ -320,6 +323,7 @@ int main(int argc, char const *argv[]) {
         // PC update
         state->PC = valP;
         break;
+      // there is room in the encoding here for 4 new categories of operations
       default:
         // invalid instruction
         state->STAT = STAT_INS;

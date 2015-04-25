@@ -164,7 +164,7 @@ int main(int argc, char const *argv[]) {
         break;
       case 0x4:
         // rmmovl
-        printf("rmmovl  %s, ($%d)%s\n", registerString(rA), littleEndianBytesToInt(&state->DMEM[state->PC + 2]), registerString(rB));
+        printf("rmmovl  %s, $%d(%s)\n", registerString(rA), littleEndianBytesToInt(&state->DMEM[state->PC + 2]), registerString(rB));
         // fetch
         valC = littleEndianBytesToInt(&state->DMEM[state->PC + 2]);
         valP = state->PC + 6;
@@ -180,7 +180,8 @@ int main(int argc, char const *argv[]) {
         break;
       case 0x5:
         // mrmovl
-        printf("mrmovl  ($%d)%s, %s\n", littleEndianBytesToInt(&state->DMEM[state->PC + 2]), registerString(rA), registerString(rB));
+        // note: order of operands is "backwards" in the source
+        printf("mrmovl  $%d(%s), %s\n", littleEndianBytesToInt(&state->DMEM[state->PC + 2]), registerString(rB), registerString(rA));
         // fetch
         valC = littleEndianBytesToInt(&state->DMEM[state->PC + 2]);
         valP = state->PC + 6;

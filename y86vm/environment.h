@@ -47,6 +47,7 @@
 
 typedef struct Config {
   bool verbose;
+  unsigned int logLevel;
   unsigned long int maxSteps;
 } Config;
 

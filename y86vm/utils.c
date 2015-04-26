@@ -13,9 +13,13 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <sysexits.h>
+#include <stdarg.h>
 
 #include "environment.h"
 #include "hexString.h"
+
+extern Config * config;
+
 
 /**
  * strpos()
@@ -90,6 +94,18 @@ char * registerString(uint8_t stat) {
       exit(EXIT_FAILURE);
   }
   return reg;
+}
+
+
+void logprintf(int level, const char *format, ...) {
+  va_list args;
+  va_start(args, format);
+  
+  if (level <= config->logLevel) {
+    vprintf(format, args);
+  }
+  
+  va_end(args);
 }
 
 

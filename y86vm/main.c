@@ -27,18 +27,19 @@
 #include "stack.h"
 #include "arithmeticLogic.h"
 
+
+// yes, I know, global variables are icky
 VirtualMachineState * state;
 Config * config;
 
+// let's rock and roll
 int main(int argc, char const *argv[]) {
   // parse arguments and get our configuration
   config = parseArguments(argc, argv);
   
-  if (config->verbose) {
-    printf("Config {\n  verbose = %s;\n  maxSteps = %lu;\n}\n",
-           config->verbose ? "true" : "false",
-           config->maxSteps);
-  }
+  logprintf(LOG_INFO, "Config {\n  verbose = %s;\n  maxSteps = %lu;\n}\n",
+         config->verbose ? "true" : "false",
+         config->maxSteps);
 
   // initialize our VM state
   state = malloc(sizeof(VirtualMachineState));
@@ -127,17 +128,17 @@ int main(int argc, char const *argv[]) {
     switch(icode) {
       case 0x0:
         // halt
-        printf("halt\n");
+        logprintf(LOG_DEBUG, "halt\n");
         state->STAT = STAT_HLT;
         break;
       case 0x1:
         // nop
-        printf("nop\n");
+        logprintf(LOG_DEBUG, "nop\n");
         state->PC += 1;
         break;
       case 0x2:
         // rrmovl
-        printf("rrmovl  %s, %s\n", registerString(rA), registerString(rB));
+        logprintf(LOG_DEBUG, "rrmovl  %s, %s\n", registerString(rA), registerString(rB));
         // fetch
         valP = state->PC + 2;
         // decode
@@ -151,7 +152,7 @@ int main(int argc, char const *argv[]) {
         break;
       case 0x3:
         // irmovl
-        printf("irmovl  $%d, %s\n", littleEndianBytesToInt(&state->DMEM[state->PC + 2]), registerString(rB));
+        logprintf(LOG_DEBUG, "irmovl  $%d, %s\n", littleEndianBytesToInt(&state->DMEM[state->PC + 2]), registerString(rB));
         // fetch
         valC = littleEndianBytesToInt(&state->DMEM[state->PC + 2]);
         valP = state->PC + 6;
@@ -164,7 +165,7 @@ int main(int argc, char const *argv[]) {
         break;
       case 0x4:
         // rmmovl
-        printf("rmmovl  %s, $%d(%s)\n", registerString(rA), littleEndianBytesToInt(&state->DMEM[state->PC + 2]), registerString(rB));
+        logprintf(LOG_DEBUG, "rmmovl  %s, $%d(%s)\n", registerString(rA), littleEndianBytesToInt(&state->DMEM[state->PC + 2]), registerString(rB));
         // fetch
         valC = littleEndianBytesToInt(&state->DMEM[state->PC + 2]);
         valP = state->PC + 6;
@@ -181,7 +182,7 @@ int main(int argc, char const *argv[]) {
       case 0x5:
         // mrmovl
         // note: order of operands is "backwards" in the source
-        printf("mrmovl  $%d(%s), %s\n", littleEndianBytesToInt(&state->DMEM[state->PC + 2]), registerString(rB), registerString(rA));
+        logprintf(LOG_DEBUG, "mrmovl  $%d(%s), %s\n", littleEndianBytesToInt(&state->DMEM[state->PC + 2]), registerString(rB), registerString(rA));
         // fetch
         valC = littleEndianBytesToInt(&state->DMEM[state->PC + 2]);
         valP = state->PC + 6;
@@ -207,22 +208,22 @@ int main(int argc, char const *argv[]) {
         switch (ifun) {
           case 0x0:
             // addl
-            printf("addl    %s, %s\n", registerString(rA), registerString(rB));
+            logprintf(LOG_DEBUG, "addl    %s, %s\n", registerString(rA), registerString(rB));
             valE = state->registers[rB] + state->registers[rA];
             break;
           case 0x1:
             // subl
-            printf("subl    %s, %s\n", registerString(rA), registerString(rB));
+            logprintf(LOG_DEBUG, "subl    %s, %s\n", registerString(rA), registerString(rB));
             valE = state->registers[rB] - state->registers[rA];
             break;
           case 0x2:
             // andl
-            printf("andl    %s, %s\n", registerString(rA), registerString(rB));
+            logprintf(LOG_DEBUG, "andl    %s, %s\n", registerString(rA), registerString(rB));
             valE = state->registers[rB] & state->registers[rA];
             break;
           case 0x3:
             // xorl
-            printf("xorl    %s, %s\n", registerString(rA), registerString(rB));
+            logprintf(LOG_DEBUG, "xorl    %s, %s\n", registerString(rA), registerString(rB));
             valE = state->registers[rB] ^ state->registers[rA];
             break;
           // there is room in the encoding here for an additional 12 ALU operations
@@ -247,7 +248,7 @@ int main(int argc, char const *argv[]) {
       case 0x7:
         // jump
         // fetch
-        printf("jmp%d    $%d\n", ifun, littleEndianBytesToInt(&state->DMEM[state->PC + 1]));
+        logprintf(LOG_DEBUG, "jmp%d    $%d\n", ifun, littleEndianBytesToInt(&state->DMEM[state->PC + 1]));
         valC = littleEndianBytesToInt(&state->DMEM[state->PC + 1]);
         valP = state->PC + 5;
         // execute
@@ -257,7 +258,7 @@ int main(int argc, char const *argv[]) {
         break;
       case 0x8:
         // call
-        printf("call    $%d\n", littleEndianBytesToInt(&state->DMEM[state->PC + 1]));
+        logprintf(LOG_DEBUG, "call    $%d\n", littleEndianBytesToInt(&state->DMEM[state->PC + 1]));
         // fetch
         valC = littleEndianBytesToInt(&state->DMEM[state->PC + 1]);
         valP = state->PC + 5;
@@ -274,7 +275,7 @@ int main(int argc, char const *argv[]) {
         break;
       case 0x9:
         // ret
-        printf("ret\n");
+        logprintf(LOG_DEBUG, "ret\n");
         // fetch
         valP = state->PC + 1;
         // decode
@@ -291,7 +292,7 @@ int main(int argc, char const *argv[]) {
         break;
       case 0xA:
         // pushl
-        printf("pushl   %s\n", registerString(rA));
+        logprintf(LOG_DEBUG, "pushl   %s\n", registerString(rA));
         // fetch
         valP = state->PC + 2;
         // decode
@@ -308,7 +309,7 @@ int main(int argc, char const *argv[]) {
         break;
       case 0xB:
         // popl
-        printf("popl    %s\n", registerString(rA));
+        logprintf(LOG_DEBUG, "popl    %s\n", registerString(rA));
         // fetch
         valP = state->PC + 2;
         // decode

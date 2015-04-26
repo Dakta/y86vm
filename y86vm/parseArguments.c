@@ -39,13 +39,9 @@ Config * parseArguments(int argc, char const *argv[]) {
   config->maxSteps = 0;
   
   for (int i=1; i<argc; i++) {
-    if (strcmp(argv[i], "-v") == 0 ||
-        strcmp(argv[i], "--verbose") == 0
-        ) {
-      config->verbose = true;
-    } else if (strcmp(argv[i], "-h") == 0 ||
-               strcmp(argv[i], "--help") == 0
-               ) {
+    if (strcmp(argv[i], "-h") == 0 ||
+        strcmp(argv[i], "--help") == 0
+    ) {
       printf(VERSION);
       printf("A bare-bones Y86 virtual machine/emulator.\n");
       
@@ -58,6 +54,12 @@ Config * parseArguments(int argc, char const *argv[]) {
       printf(VERSION);
       
       exit(EX_OK);
+    } else if (strcmp(argv[i], "-v") == 0 ||
+               strcmp(argv[i], "--verbose") == 0
+    ) {
+      config->verbose = true;
+      // currently we don't implement selectable loglevel, but it's in the code
+      config->logLevel = LOG_TRACE;
     } else if (strcmp(argv[i], "-l") == 0 ||
                strcmp(argv[i], "--limit") == 0
                ) {

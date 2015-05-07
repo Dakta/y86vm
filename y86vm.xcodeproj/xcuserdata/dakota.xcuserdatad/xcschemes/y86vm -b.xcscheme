@@ -65,24 +65,12 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "sample47.yao"
+            argument = "-f bytes"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "sample47.yo.OLD"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "asumr.yo"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "asumr.yao"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "example.yo"
-            isEnabled = "NO">
+            argument = "sample47.ybo"
+            isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>

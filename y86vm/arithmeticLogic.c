@@ -10,6 +10,7 @@
 
 #include "arithmeticLogic.h"
 #include "environment.h"
+#include "utils.h"
 
 extern VirtualMachineState * state;
 
@@ -31,7 +32,21 @@ bool evaluateConditionCodes(uint8_t ifun) {
       return (bool)(!(state->SF != state->OF));
     case COND_GT:
       return (bool)(!(state->SF != state->OF) && !state->ZF);
-    
+//    case COND_NONE:
+//      return true;
+//    case COND_LTE:
+//      return (bool)((state->SF ^ state->OF) | state->ZF);
+//    case COND_LT:
+//      return (bool)(state->SF ^ state->OF);
+//    case COND_EQ:
+//      return (bool)(state->ZF == 1);
+//    case COND_NE:
+//      return (bool)(state->ZF == 0);
+//    case COND_GTE:
+//      return (bool)((state->SF ^ state->OF) == 0);
+//    case COND_GT:
+//      return (bool)(((state->SF ^ state->OF) | state->ZF) == 0);
+
     default:
       return false;
   }

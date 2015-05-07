@@ -13,6 +13,7 @@
 		1D3841421AE467D400E29ADE /* stack.c in Sources */ = {isa = PBXBuildFile; fileRef = 1D3841401AE467D400E29ADE /* stack.c */; };
 		1D3841461AE4696C00E29ADE /* hexString.c in Sources */ = {isa = PBXBuildFile; fileRef = 1D3841441AE4696C00E29ADE /* hexString.c */; };
 		1D38414B1AE478B700E29ADE /* arithmeticLogic.c in Sources */ = {isa = PBXBuildFile; fileRef = 1D3841491AE478B700E29ADE /* arithmeticLogic.c */; };
+		1DAEA3EB1AF5AB1300EF3A8F /* memoryManager.c in Sources */ = {isa = PBXBuildFile; fileRef = 1DAEA3E91AF5AB1300EF3A8F /* memoryManager.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +29,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1D05476D1AF82D80002B81EB /* sample47.ybo */ = {isa = PBXFileReference; lastKnownFileType = file; path = sample47.ybo; sourceTree = "<group>"; };
+		1D21FA001AEC80E700ACAFB4 /* asumr.yo */ = {isa = PBXFileReference; lastKnownFileType = text; path = asumr.yo; sourceTree = "<group>"; };
+		1D21FA011AEC80E700ACAFB4 /* asumr.ys */ = {isa = PBXFileReference; lastKnownFileType = text; path = asumr.ys; sourceTree = "<group>"; };
+		1D21FA021AEC810300ACAFB4 /* example.ys */ = {isa = PBXFileReference; lastKnownFileType = text; path = example.ys; sourceTree = "<group>"; };
+		1D21FA041AEC813100ACAFB4 /* sample47.ys */ = {isa = PBXFileReference; lastKnownFileType = text; path = sample47.ys; sourceTree = "<group>"; };
+		1D21FA051AEC9D0C00ACAFB4 /* asumr.yao */ = {isa = PBXFileReference; lastKnownFileType = text; path = asumr.yao; sourceTree = "<group>"; };
 		1D38412E1AE464CF00E29ADE /* y86vm */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = y86vm; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D3841311AE464CF00E29ADE /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		1D3841381AE465F100E29ADE /* environment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = environment.h; sourceTree = "<group>"; };
@@ -42,6 +49,9 @@
 		1D3841481AE470FB00E29ADE /* example.yo */ = {isa = PBXFileReference; lastKnownFileType = text; path = example.yo; sourceTree = "<group>"; };
 		1D3841491AE478B700E29ADE /* arithmeticLogic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = arithmeticLogic.c; sourceTree = "<group>"; };
 		1D38414A1AE478B700E29ADE /* arithmeticLogic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = arithmeticLogic.h; sourceTree = "<group>"; };
+		1DAEA3E91AF5AB1300EF3A8F /* memoryManager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = memoryManager.c; sourceTree = "<group>"; };
+		1DAEA3EA1AF5AB1300EF3A8F /* memoryManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memoryManager.h; sourceTree = "<group>"; };
+		1DAEA3EC1AF5C1CA00EF3A8F /* sample47.yao */ = {isa = PBXFileReference; lastKnownFileType = text; path = sample47.yao; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +69,13 @@
 			isa = PBXGroup;
 			children = (
 				1D3841481AE470FB00E29ADE /* example.yo */,
+				1D21FA021AEC810300ACAFB4 /* example.ys */,
+				1D21FA041AEC813100ACAFB4 /* sample47.ys */,
+				1D05476D1AF82D80002B81EB /* sample47.ybo */,
+				1DAEA3EC1AF5C1CA00EF3A8F /* sample47.yao */,
+				1D21FA001AEC80E700ACAFB4 /* asumr.yo */,
+				1D21FA051AEC9D0C00ACAFB4 /* asumr.yao */,
+				1D21FA011AEC80E700ACAFB4 /* asumr.ys */,
 				1D3841301AE464CF00E29ADE /* y86vm */,
 				1D38412F1AE464CF00E29ADE /* Products */,
 			);
@@ -79,6 +96,8 @@
 				1D38413F1AE467BC00E29ADE /* instructions */,
 				1D3841311AE464CF00E29ADE /* main.c */,
 				1D3841381AE465F100E29ADE /* environment.h */,
+				1DAEA3E91AF5AB1300EF3A8F /* memoryManager.c */,
+				1DAEA3EA1AF5AB1300EF3A8F /* memoryManager.h */,
 				1D3841391AE4669A00E29ADE /* parseArguments.c */,
 				1D38413A1AE4669A00E29ADE /* parseArguments.h */,
 				1D38413C1AE4678500E29ADE /* utils.c */,
@@ -163,6 +182,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1DAEA3EB1AF5AB1300EF3A8F /* memoryManager.c in Sources */,
 				1D38413E1AE4678500E29ADE /* utils.c in Sources */,
 				1D3841461AE4696C00E29ADE /* hexString.c in Sources */,
 				1D38414B1AE478B700E29ADE /* arithmeticLogic.c in Sources */,

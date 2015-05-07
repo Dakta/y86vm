@@ -41,6 +41,11 @@
 #define REG_EDI  7
 #define REG_NONE 15
 
+// input formats
+#define INPUT_BYTES  'b'
+#define INPUT_ASCII  'a'
+// unused
+#define INPUT_DETECT 'd'
 
 // 
 #define MEM_SZ 65536 // 2 to the 19 bits in bytes
@@ -49,6 +54,7 @@ typedef struct Config {
   bool verbose;
   unsigned int logLevel;
   unsigned long int maxSteps;
+  char inputFormat;
 } Config;
 
 typedef struct StackNode {
@@ -63,7 +69,8 @@ typedef struct Stack {
 
 typedef struct VirtualMachineState {
   // TODO: replace this with storage in program memory
-  char * source;
+  char * sourceASCII;
+  uint8_t * sourceBytes;
   // how many steps has program taken
   unsigned long int steps;
   // program counter
